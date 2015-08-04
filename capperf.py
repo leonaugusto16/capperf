@@ -48,10 +48,8 @@ def init():
 	perf.parser=True
 	results = perf.run()
 
+	status(results)
 	return results
-	print results["connection_time_avg"] + " is avg"
-	#print results["connection_time_max"] + " is max"
-	#print results["reply_status_3xx"]
 
 def status(results):	
 	if(string.atoi(results["reply_status_4xx"]) > 0):
@@ -63,11 +61,13 @@ def status(results):
 
 def cap():
 
-	# Primeiro teste
+	# First test
 	results = init()
 	
-	# Proximos testes
-	MAX=1000
+	# Next tests
+	MAX=1000 # Number max of requests
+	
+	#Regex 
 	s = results["command"].split()
 	try:
 		result = re.match ('(--num-conns=)(...)', s[7])
@@ -76,14 +76,14 @@ def cap():
 		result = re.match ('(--num-conns=)(..)', s[7])
 		conn = string.atoi(result.group(2))
 	
+	#Begin next test
 	MIN = conn
 	while MIN < MAX:
-		comand = results["command"]
 		MIN+=conn
-		comand = comand.replace('--num-conns='+str(conn),'--num-conns='+str(MIN))
+		comand = results["command"].replace('--num-conns='+str(MIN-conn),'--num-conns='+str(MIN))
 		perf = Httperf(comand)
 		perf.parser=True
         	results = perf.run()
-		print results["connection_time_avg"] + " is avg"
+		status(results)
 
 cap()
