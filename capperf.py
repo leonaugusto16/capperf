@@ -2,12 +2,13 @@
 from httperfpy import Httperf
 import sys
 import string
+import re
 
+nm_cnns=1
 def init():
 
 	svr="localhost"
 	prt=80
-	nm_cnns=1
 	nm_clls=1	
 	rcv_bffr=16384	
 	snd_bffr=4096
@@ -36,6 +37,8 @@ def init():
 		elif(sys.argv[i] == "--send-buffer"):
                         i+=1
                         snd_bffr=sys.argv[i]
+		elif(sys.argv[i] == "--rage"):
+                        i+=1
 		else:
 			print "WARN: Variable not exist "+sys.argv[i]
 			i+=1
@@ -46,7 +49,7 @@ def init():
 	results = perf.run()
 
 	return results
-	#print results["connection_time_avg"] + " is avg"
+	print results["connection_time_avg"] + " is avg"
 	#print results["connection_time_max"] + " is max"
 	#print results["reply_status_3xx"]
 
@@ -59,7 +62,28 @@ def status(results):
 		print "OK: "+results["reply_status_2xx"]+" replays code 2xx"
 
 def cap():
+
+	# Primeiro teste
 	results = init()
-	status(results)
+	
+	# Proximos testes
+	MAX=1000
+	s = results["command"].split()
+	try:
+		result = re.match ('(--num-conns=)(...)', s[7])
+		conn = string.atoi(result.group(2))
+	except:
+		result = re.match ('(--num-conns=)(..)', s[7])
+		conn = string.atoi(result.group(2))
+	
+	MIN = conn
+	while MIN < MAX:
+		comand = results["command"]
+		MIN+=conn
+		comand = comand.replace('--num-conns='+str(conn),'--num-conns='+str(MIN))
+		perf = Httperf(comand)
+		perf.parser=True
+        	results = perf.run()
+		print results["connection_time_avg"] + " is avg"
 
 cap()
