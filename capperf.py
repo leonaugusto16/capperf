@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from httperfpy import Httperf
 import sys
+import string
 
 def init():
 
@@ -44,20 +45,21 @@ def init():
 	perf.parser=True
 	results = perf.run()
 
-	print results["connection_time_avg"] + " is avg"
-	print results["connection_time_max"] + " is max"
-	print results["reply_status_3xx"]
+	return results
+	#print results["connection_time_avg"] + " is avg"
+	#print results["connection_time_max"] + " is max"
+	#print results["reply_status_3xx"]
 
-init()
+def status(results):	
+	if(string.atoi(results["reply_status_4xx"]) > 0):
+		print "ERROR: "+results["reply_status_4xx"]+" replays code 4xx"
+	elif(string.atoi(results["reply_status_3xx"]) > 0):
+		print "WARN: "+results["reply_status_3xx"]+" replays code 3xx"
+	elif(string.atoi(results["reply_status_2xx"])>0):
+		print "OK: "+results["reply_status_2xx"]+" replays code 2xx"
 
-#perf = Httperf(server="webmail.dcc.ufrj.br",port=80,num_conns=100)
-# replace dashes ("-") with underscores ("_") in httperf options
+def cap():
+	results = init()
+	status(results)
 
-#perf.parser = True
-
-#results = perf.run()
-
-
-#print results["connection_time_avg"] + " is avg"
-#print results["connection_time_max"] + " is max"
-#print results["reply_status_3xx"]
+cap()
