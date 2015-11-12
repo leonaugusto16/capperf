@@ -50,7 +50,7 @@ def main():
 
 	results = perf.run()
 
-	if(data['result'] == 'simple'):
+	if(data['simple'] == True):
 		simple_result(results)
 
 	return results
