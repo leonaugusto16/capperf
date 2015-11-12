@@ -9,7 +9,6 @@ def status(self):
                 print "[*] WARN: "+self["reply_status_3xx"]+" replays code 3xx"
         elif(string.atoi(self["reply_status_2xx"])>0):
                 print "[*] OK: "+self["reply_status_2xx"]+" replays code 2xx"
-	print "\n"
 
 def error(self):
 	if(string.atoi(self["errors_addr_unavail"]) > 0):
@@ -31,7 +30,10 @@ def simple_result(self):
 	status(self)
 	error(self)	
 
-	
+	print "[+] Connection rate : "+self['connection_rate_ms_conn']+" conn/s"
+	print "[+] Average Connection time : "+self['connection_time_avg']+" ms"
+	print "[+] Connection length : "+self['connection_length']+" replies/conn\n"
+
 
 def main():
 	print "[*] Import data"
@@ -55,5 +57,5 @@ def main():
 
 
 if __name__ == '__main__':
-	print main()
+	main()
 
