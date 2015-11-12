@@ -1,0 +1,7 @@
+{
+	"server" : "www.dcc.ufrj.br",
+	"port" : 80,
+	"num_conns" : 1,
+	"num_calls" : 1,
+	"uri" : "/"
+}
